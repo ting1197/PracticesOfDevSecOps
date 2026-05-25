@@ -1,0 +1,56 @@
+<% 
+  const gradientIndex = (parseInt(product.id) % 6) + 1;
+  const initials = product.name ? product.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase() : '??';
+  const stockLevel = product.stock || product.quantity || 0;
+  let stockBadgeClass = 'badge--success';
+  let stockText = 'In Stock (' + stockLevel + ')';
+  if (stockLevel <= 0) {
+    stockBadgeClass = 'badge--danger';
+    stockText = 'Out of Stock';
+  } else if (stockLevel <= 10) {
+    stockBadgeClass = 'badge--warning';
+    stockText = 'Low Stock (' + stockLevel + ')';
+  }
+  const isOutOfStock = stockLevel <= 0;
+%>
+<%- include('layout', { body: `
+<div style="margin-bottom: 1.5rem;">
+  <a href="/" class="btn btn--ghost btn--sm">← Back to Products</a>
+</div>
+
+<div class="product-detail">
+  <div class="product-detail__image product-card__image--gradient-${gradientIndex}">
+    ${initials}
+  </div>
+
+  <div class="product-detail__info">
+    <h1 class="product-detail__name">${product.name}</h1>
+
+    <p class="product-detail__description">${product.description || 'A premium product from our curated collection. Built with quality and craftsmanship in mind.'}</p>
+
+    <div class="product-detail__price">$${parseFloat(product.price).toFixed(2)}</div>
+
+    <div class="product-detail__meta">
+      <span class="badge ${stockBadgeClass}">
+        <span class="badge__dot"></span>
+        ${stockText}
+      </span>
+    </div>
+
+    ${isOutOfStock ? `
+      <button class="btn btn--primary btn--lg btn--disabled" disabled>Out of Stock</button>
+    ` : `
+      <form action="/cart/add" method="POST" class="product-detail__form">
+        <input type="hidden" name="productId" value="${product.id}">
+        <input type="hidden" name="productName" value="${product.name}">
+        <input type="hidden" name="price" value="${product.price}">
+        <div class="form-group">
+          <label class="form-label" for="quantity">Quantity</label>
+          <input type="number" name="quantity" id="quantity" value="1" min="1" max="${stockLevel}" class="form-input form-input--sm">
+        </div>
+        <button type="submit" class="btn btn--primary btn--lg">Add to Cart</button>
+      </form>
+    `}
+  </div>
+</div>
+` }) %>

@@ -1,0 +1,5 @@
+201546:frontend:3000
+201569:grafana:3001
+201596:prometheus:9090
+201621:order-service:3004
+201643:inventory-service:3005

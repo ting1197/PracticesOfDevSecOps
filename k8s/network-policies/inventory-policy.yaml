@@ -1,0 +1,50 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: inventory-service-policy
+  namespace: ecommerce
+  labels:
+    part-of: ecommerce
+spec:
+  podSelector:
+    matchLabels:
+      app: inventory-service
+  policyTypes:
+    - Ingress
+    - Egress
+  ingress:
+    # Allow traffic from order-service
+    - from:
+        - podSelector:
+            matchLabels:
+              app: order-service
+      ports:
+        - protocol: TCP
+          port: 3002
+    # Allow traffic from prometheus for metrics scraping
+    - from:
+        - podSelector:
+            matchLabels:
+              app: prometheus
+      ports:
+        - protocol: TCP
+          port: 3002
+  egress:
+    # Allow traffic to postgres
+    - to:
+        - podSelector:
+            matchLabels:
+              app: postgres
+      ports:
+        - protocol: TCP
+          port: 5432
+    # Allow DNS resolution (kube-system)
+    - to:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: kube-system
+      ports:
+        - protocol: UDP
+          port: 53
+        - protocol: TCP
+          port: 53

@@ -1,0 +1,39 @@
+# Dependencies
+node_modules/
+
+# Environment
+.env
+*.env.local
+
+# TLS Certificates
+tls/certs/
+*.key
+*.crt
+*.csr
+*.srl
+*.pem
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Docker
+*.tar
+
+# Logs
+*.log
+npm-debug.log*
+
+# Build
+dist/
+build/
+
+# K6 results
+results/
+*.json.gz

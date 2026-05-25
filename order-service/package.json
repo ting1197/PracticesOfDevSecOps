@@ -1,0 +1,17 @@
+{
+  "name": "order-service",
+  "version": "1.0.0",
+  "description": "E-commerce Order Service",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
+  },
+  "dependencies": {
+    "express": "^4.21.0",
+    "axios": "^1.7.0",
+    "prom-client": "^15.1.0",
+    "morgan": "^1.10.0",
+    "uuid": "^10.0.0"
+  }
+}

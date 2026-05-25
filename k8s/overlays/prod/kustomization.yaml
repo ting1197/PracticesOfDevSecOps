@@ -1,0 +1,60 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: ecommerce
+
+resources:
+  - ../../base
+
+patches:
+  - path: patches/replicas.yaml
+
+patchesJson6902:
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: frontend
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: NODE_ENV
+          value: production
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: LOG_LEVEL
+          value: warn
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: order-service
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: NODE_ENV
+          value: production
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: LOG_LEVEL
+          value: warn
+  - target:
+      group: apps
+      version: v1
+      kind: Deployment
+      name: inventory-service
+    patch: |
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: NODE_ENV
+          value: production
+      - op: add
+        path: /spec/template/spec/containers/0/env/-
+        value:
+          name: LOG_LEVEL
+          value: warn

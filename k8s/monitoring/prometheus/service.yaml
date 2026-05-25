@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: ecommerce
+  labels:
+    app: prometheus
+    part-of: ecommerce
+spec:
+  type: ClusterIP
+  selector:
+    app: prometheus
+  ports:
+    - port: 9090
+      targetPort: 9090
+      protocol: TCP
+      name: http

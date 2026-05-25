@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="ShopK8s — Modern cloud-native e-commerce platform running on Kubernetes">
+  <title><%= typeof title !== 'undefined' ? title + ' | ' : '' %>ShopK8s</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+
+  <!-- Navigation -->
+  <nav class="navbar">
+    <div class="navbar__inner">
+      <a href="/" class="navbar__logo">🛒 <span>ShopK8s</span></a>
+      <ul class="navbar__links">
+        <li><a href="/" class="navbar__link" id="nav-products">Products</a></li>
+        <li>
+          <a href="/cart" class="navbar__link" id="nav-cart">
+            🛍️ Cart
+            <% if (cart && cart.length > 0) { %>
+              <span class="navbar__cart-badge"><%= cart.reduce((sum, item) => sum + item.quantity, 0) %></span>
+            <% } %>
+          </a>
+        </li>
+        <li><a href="/orders" class="navbar__link" id="nav-orders">Orders</a></li>
+      </ul>
+    </div>
+  </nav>
+
+  <!-- Flash Messages -->
+  <% if (flash) { %>
+    <div class="main" style="padding-bottom: 0;">
+      <div class="flash flash--<%= flash.type %>" role="alert">
+        <span class="flash__icon"><%= flash.type === 'success' ? '✅' : '❌' %></span>
+        <span><%= flash.message %></span>
+      </div>
+    </div>
+  <% } %>
+
+  <!-- Main Content -->
+  <main class="main">
+    <%- body %>
+  </main>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <span class="footer__text">© 2025 ShopK8s — Cloud-Native E-Commerce</span>
+    <span class="footer__pod-badge">
+      <span class="footer__pod-dot"></span>
+      Pod: <%= hostname %>
+    </span>
+  </footer>
+
+</body>
+</html>

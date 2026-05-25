@@ -1,0 +1,18 @@
+# RoleBinding for Prometheus - binds prometheus-sa to prometheus-role
+# This allows Prometheus to discover and scrape pods for metrics
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: prometheus-role-binding
+  namespace: ecommerce
+  labels:
+    app: prometheus
+    part-of: ecommerce
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: prometheus-role
+subjects:
+  - kind: ServiceAccount
+    name: prometheus-sa
+    namespace: ecommerce

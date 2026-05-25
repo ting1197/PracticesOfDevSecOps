@@ -1,0 +1,8 @@
+<%- include('layout', { body: `
+<div class="error-page">
+  <div class="error-page__code">${typeof statusCode !== 'undefined' ? statusCode : '500'}</div>
+  <h1 class="error-page__title">${typeof title !== 'undefined' ? title : 'Something Went Wrong'}</h1>
+  <p class="error-page__message">${typeof message !== 'undefined' ? message : 'An unexpected error occurred. Please try again later.'}</p>
+  <a href="/" class="btn btn--primary">Back to Home</a>
+</div>
+` }) %>
