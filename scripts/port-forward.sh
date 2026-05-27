@@ -58,17 +58,18 @@ start_pfs() {
     mkdir -p "$LOG_DIR"
     touch "$PID_FILE"
 
-    # Define services: "local_port:pod_port" "service_name" "log_name"
+    # Define services: "local_port:pod_port" "service_name" "log_name" "namespace"
     SERVICES=(
-        "3000:3000 frontend frontend"
-        "3001:3000 grafana grafana"
-        "9090:9090 prometheus prometheus"
-        "3004:3001 order-service order-service"
-        "3005:3002 inventory-service inventory-service"
+        "3000:3000 frontend frontend ecommerce"
+        "3001:3000 grafana grafana ecommerce"
+        "9090:9090 prometheus prometheus ecommerce"
+        "3004:3001 order-service order-service ecommerce"
+        "3005:3002 inventory-service inventory-service ecommerce"
+        "8443:443 ingress-nginx-controller ingress-nginx ingress-nginx"
     )
 
     for svc_info in "${SERVICES[@]}"; do
-        read -r ports svc log_name <<< "$svc_info"
+        read -r ports svc log_name svc_ns <<< "$svc_info"
         
         local_port=$(echo "$ports" | cut -d: -f1)
         pod_port=$(echo "$ports" | cut -d: -f2)
@@ -81,9 +82,9 @@ start_pfs() {
             continue
         fi
 
-        echo "---> Forwarding $svc ($ports)..."
+        echo "---> Forwarding $svc ($ports) in namespace $svc_ns..."
         # Run port forward in background
-        nohup kubectl port-forward "svc/$svc" "$ports" -n "$NAMESPACE" > "${LOG_DIR}/${log_name}.log" 2>&1 &
+        nohup kubectl port-forward "svc/$svc" "$ports" -n "$svc_ns" > "${LOG_DIR}/${log_name}.log" 2>&1 &
         pid=$!
         
         # Save to PID file
@@ -94,11 +95,12 @@ start_pfs() {
     echo ""
     echo "✅ Port-forwarding started!"
     echo "Access URLs:"
-    echo "  - 🛒 Shopping Frontend:  http://localhost:3000"
-    echo "  - 📊 Grafana Dashboard:   http://localhost:3001 (User: admin, Pwd: admin_secret_2024)"
-    echo "  - 🔍 Prometheus:          http://localhost:9090"
-    echo "  - 📦 Order API proxy:    http://localhost:3004"
-    echo "  - ⚙️  Inventory API:       http://localhost:3005"
+    echo "  - 🛒 Shopping Frontend (Direct): http://localhost:3000"
+    echo "  - 🛡️  Shopping Frontend (Ingress): https://shop.local:8443 (For resilience testing)"
+    echo "  - 📊 Grafana Dashboard:           http://localhost:3001 (User: admin, Pwd: admin_secret_2024)"
+    echo "  - 🔍 Prometheus:                  http://localhost:9090"
+    echo "  - 📦 Order API proxy:            http://localhost:3004"
+    echo "  - ⚙️  Inventory API:               http://localhost:3005"
     echo ""
     echo "Logs are available in: $LOG_DIR"
     echo "========================================"
