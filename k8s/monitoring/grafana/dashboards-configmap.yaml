@@ -107,7 +107,7 @@ data:
           "datasource": { "type": "prometheus", "uid": "prometheus" },
           "targets": [
             {
-              "expr": "count(up{job=~\"frontend|order-service|inventory-service\"} == 1)",
+              "expr": "count(up{job=\"kubernetes-pods\", app=~\"frontend|order-service|inventory-service\"} == 1)",
               "legendFormat": "Total Active",
               "refId": "A",
               "instant": true
@@ -133,6 +133,31 @@ data:
             "justifyMode": "auto",
             "textMode": "auto",
             "reduceOptions": { "calcs": ["lastNotNull"], "fields": "", "values": false }
+          }
+        },
+        {
+          "title": "Frontend Pods Load Distribution (Load Balancing)",
+          "type": "timeseries",
+          "gridPos": { "h": 8, "w": 24, "x": 0, "y": 16 },
+          "datasource": { "type": "prometheus", "uid": "prometheus" },
+          "targets": [
+            {
+              "expr": "sum(rate(http_requests_total{app=\"frontend\"}[1m])) by (pod)",
+              "legendFormat": "{{pod}}",
+              "refId": "A"
+            }
+          ],
+          "fieldConfig": {
+            "defaults": {
+              "color": { "mode": "palette-classic" },
+              "custom": { "lineWidth": 2, "fillOpacity": 10, "spanNulls": false, "showPoints": "auto", "pointSize": 5 },
+              "unit": "reqps"
+            },
+            "overrides": []
+          },
+          "options": {
+            "tooltip": { "mode": "multi", "sort": "desc" },
+            "legend": { "displayMode": "table", "placement": "bottom", "calcs": ["mean", "max"] }
           }
         }
       ],
