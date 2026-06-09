@@ -19,9 +19,25 @@ spec:
     spec:
       serviceAccountName: postgres-sa
       automountServiceAccountToken: false
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      initContainers:
+        - name: init-chmod
+          image: ecommerce/postgres:latest
+          imagePullPolicy: IfNotPresent
+          command: ["sh", "-c", "chown -R 999:999 /var/lib/postgresql/data"]
+          securityContext:
+            runAsUser: 0
+            runAsGroup: 0
+          volumeMounts:
+            - name: postgres-data
+              mountPath: /var/lib/postgresql/data
       containers:
         - name: postgres
-          image: postgres:16-alpine
+          image: ecommerce/postgres:latest
+          imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 5432
               protocol: TCP
@@ -29,12 +45,13 @@ spec:
             - secretRef:
                 name: db-secret
           env:
+            - name: PGDATA
+              value: /var/lib/postgresql/data/pgdata
             - name: POSTGRES_DB
               value: "ecommerce"
           volumeMounts:
             - name: postgres-data
               mountPath: /var/lib/postgresql/data
-              subPath: pgdata
             - name: init-scripts
               mountPath: /docker-entrypoint-initdb.d/
           resources:
@@ -47,9 +64,9 @@ spec:
           livenessProbe:
             exec:
               command:
-                - pg_isready
-                - -U
-                - $(POSTGRES_USER)
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER"
             initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 5
@@ -57,9 +74,9 @@ spec:
           readinessProbe:
             exec:
               command:
-                - pg_isready
-                - -U
-                - $(POSTGRES_USER)
+                - sh
+                - -c
+                - pg_isready -U "$POSTGRES_USER"
             initialDelaySeconds: 10
             periodSeconds: 10
             timeoutSeconds: 5

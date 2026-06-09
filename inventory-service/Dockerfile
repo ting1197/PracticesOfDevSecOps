@@ -11,6 +11,7 @@ COPY --from=builder --chown=appuser:appgroup /app/node_modules ./node_modules
 COPY --from=builder --chown=appuser:appgroup /app/src ./src
 COPY --from=builder --chown=appuser:appgroup /app/db ./db
 COPY --from=builder --chown=appuser:appgroup /app/package.json ./package.json
+RUN rm -rf /usr/local/lib/node_modules/npm /usr/local/bin/npm /usr/local/bin/npx
 USER appuser
 EXPOSE 3002
 HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 CMD node -e "require('http').get('http://localhost:3002/healthz', (r) => { process.exit(r.statusCode === 200 ? 0 : 1) })"

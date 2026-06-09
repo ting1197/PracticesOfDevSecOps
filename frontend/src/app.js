@@ -256,8 +256,12 @@ app.use((err, req, res, _next) => {
 // ---------------------
 // Start Server
 // ---------------------
-app.listen(PORT, () => {
-  console.log(`🛒 ShopK8s Frontend running on port ${PORT}`);
-  console.log(`   Pod hostname: ${HOSTNAME}`);
-  console.log(`   Order service: ${ORDER_SERVICE_URL}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`🛒 ShopK8s Frontend running on port ${PORT}`);
+    console.log(`   Pod hostname: ${HOSTNAME}`);
+    console.log(`   Order service: ${ORDER_SERVICE_URL}`);
+  });
+}
+
+module.exports = app;

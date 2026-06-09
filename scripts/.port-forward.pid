@@ -1,6 +1,0 @@
-13212:frontend:3000
-13239:grafana:3001
-13269:prometheus:9090
-13293:order-service:3004
-13317:inventory-service:3005
-13355:ingress-nginx-controller:8443

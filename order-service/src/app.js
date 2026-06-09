@@ -65,10 +65,11 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`Order service listening on port ${PORT}`);
-  console.log(`Inventory service URL: ${INVENTORY_SERVICE_URL}`);
-});
+if (require.main === module) {
+  app.listen(PORT, () => {
+    console.log(`Order service listening on port ${PORT}`);
+    console.log(`Inventory service URL: ${INVENTORY_SERVICE_URL}`);
+  });
+}
 
 module.exports = app;

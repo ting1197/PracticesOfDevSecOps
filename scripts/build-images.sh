@@ -12,7 +12,7 @@ echo "Registry: $REGISTRY"
 echo "Tag: $TAG"
 echo "========================================"
 
-SERVICES=("frontend" "order-service" "inventory-service")
+SERVICES=("frontend" "order-service" "inventory-service" "postgres")
 
 for svc in "${SERVICES[@]}"; do
   echo ""

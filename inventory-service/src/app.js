@@ -81,40 +81,44 @@ app.use((err, req, res, next) => {
   res.status(500).json({ error: 'Internal server error', message: err.message });
 });
 
-// Update stock gauge periodically (every 30 seconds)
-const stockGaugeInterval = setInterval(() => updateStockGauge(pool), 30000);
+// Gauge update logic is moved to server startup
 
-// Initial stock gauge update
-updateStockGauge(pool).catch((err) => {
-  console.error('Initial stock gauge update failed:', err.message);
-});
-
-// Start server
-const server = app.listen(PORT, () => {
-  console.log(`Inventory service listening on port ${PORT}`);
-});
-
-// Graceful shutdown
-process.on('SIGTERM', async () => {
-  console.log('SIGTERM received. Shutting down gracefully...');
-  clearInterval(stockGaugeInterval);
-
-  server.close(async () => {
-    console.log('HTTP server closed');
-    try {
-      await pool.end();
-      console.log('Database pool closed');
-    } catch (err) {
-      console.error('Error closing database pool:', err.message);
-    }
-    process.exit(0);
+// Start server only when run directly
+if (require.main === module) {
+  // Initial stock gauge update
+  updateStockGauge(pool).catch((err) => {
+    console.error('Initial stock gauge update failed:', err.message);
   });
 
-  // Force close after 10 seconds
-  setTimeout(() => {
-    console.error('Forced shutdown after timeout');
-    process.exit(1);
-  }, 10000);
-});
+  // Update stock gauge periodically (every 30 seconds)
+  const stockGaugeInterval = setInterval(() => updateStockGauge(pool), 30000);
+
+  const server = app.listen(PORT, () => {
+    console.log(`Inventory service listening on port ${PORT}`);
+  });
+
+  // Graceful shutdown
+  process.on('SIGTERM', async () => {
+    console.log('SIGTERM received. Shutting down gracefully...');
+    clearInterval(stockGaugeInterval);
+
+    server.close(async () => {
+      console.log('HTTP server closed');
+      try {
+        await pool.end();
+        console.log('Database pool closed');
+      } catch (err) {
+        console.error('Error closing database pool:', err.message);
+      }
+      process.exit(0);
+    });
+
+    // Force close after 10 seconds
+    setTimeout(() => {
+      console.error('Forced shutdown after timeout');
+      process.exit(1);
+    }, 10000);
+  });
+}
 
 module.exports = app;

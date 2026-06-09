@@ -28,8 +28,8 @@ done
 
 # Also scan postgres base image
 echo ""
-echo "---> Scanning postgres:16-alpine..."
-trivy image --severity "$SEVERITY" --exit-code 0 postgres:16-alpine
+echo "---> Scanning ecommerce/postgres:latest..."
+trivy image --severity "$SEVERITY" --exit-code 0 ecommerce/postgres:latest
 
 echo ""
 echo "========================================"
