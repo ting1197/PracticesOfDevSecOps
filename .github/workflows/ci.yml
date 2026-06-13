@@ -17,11 +17,19 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Gitleaks
+      - name: Gitleaks (Standard Scan)
+        if: github.event.forced != true
         id: gitleaks
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Gitleaks (Force Push Scan)
+        if: github.event.forced == true
+        run: |
+          wget https://github.com/gitleaks/gitleaks/releases/download/v8.24.3/gitleaks_8.24.3_linux_x64.tar.gz
+          tar -xzf gitleaks_8.24.3_linux_x64.tar.gz
+          ./gitleaks detect --redact -v --exit-code=2 --report-format=sarif --report-path=results.sarif
 
       - name: Upload Gitleaks scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v4
