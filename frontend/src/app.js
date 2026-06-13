@@ -82,7 +82,7 @@ app.use((req, res, next) => {
 // Health Check Endpoints
 // ---------------------
 app.get('/healthz', (req, res) => {
-  res.status(200).json({ status: 'I\'m ok', timestamp: new Date().toISOString() });
+  res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });
 });
 
 app.get('/readyz', async (req, res) => {
